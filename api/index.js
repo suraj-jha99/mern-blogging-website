@@ -12,14 +12,19 @@ const uploadMiddleware = multer({ dest: 'uploads/' });
 const fs = require('fs');
 
 const salt = bcrypt.genSaltSync(10);
+//JWT_SECRET_KEY
 const secret = 'asdfe45we45w345wegw345werjktjwertkj';
 
-app.use(cors({credentials:true,origin:'http://localhost:3000'}));
+app.use(cors({
+  credentials:true,
+  origin:'http://localhost:3000'}
+  ));
+  
 app.use(express.json());
 app.use(cookieParser());
 app.use('/uploads', express.static(__dirname + '/uploads'));
 
-mongoose.connect('mongodb+srv://blog:RD8paskYC8Ayj09u@cluster0.pflplid.mongodb.net/?retryWrites=true&w=majority');
+mongoose.connect('mongodb+srv://sarcasticsuraj7048:1qMd6FRcJGtksX5L@cluster0.41mpiiy.mongodb.net/?retryWrites=true&w=majority');
 
 app.post('/register', async (req,res) => {
   const {username,password} = req.body;
@@ -35,6 +40,7 @@ app.post('/register', async (req,res) => {
   }
 });
 
+//login endpoint
 app.post('/login', async (req,res) => {
   const {username,password} = req.body;
   const userDoc = await User.findOne({username});
@@ -53,6 +59,8 @@ app.post('/login', async (req,res) => {
   }
 });
 
+//profile endpoint : if client try to access this endpoint, grab jwt token (which is being sent
+//as cookie by server) from req body and verify if token is valid or not (using secret key)
 app.get('/profile', (req,res) => {
   const {token} = req.cookies;
   jwt.verify(token, secret, {}, (err,info) => {
@@ -61,10 +69,12 @@ app.get('/profile', (req,res) => {
   });
 });
 
+//logout endpoint : reset token to empty string[to expire token] on logout request and respond with ok
 app.post('/logout', (req,res) => {
   res.cookie('token', '').json('ok');
 });
 
+//post endpoint : to upload files while creating a new post
 app.post('/post', uploadMiddleware.single('file'), async (req,res) => {
   const {originalname,path} = req.file;
   const parts = originalname.split('.');
@@ -87,6 +97,7 @@ app.post('/post', uploadMiddleware.single('file'), async (req,res) => {
   });
 
 });
+
 
 app.put('/post',uploadMiddleware.single('file'), async (req,res) => {
   let newPath = null;
@@ -119,6 +130,7 @@ app.put('/post',uploadMiddleware.single('file'), async (req,res) => {
 
 });
 
+//to populate posts and sort them by latest posts order and limit posts t0 20
 app.get('/post', async (req,res) => {
   res.json(
     await Post.find()

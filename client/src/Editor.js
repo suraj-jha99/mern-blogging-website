@@ -1,6 +1,7 @@
 import ReactQuill from "react-quill";
 
 export default function Editor({value,onChange}) {
+  //to add more option to our react quill text editor
   const modules = {
     toolbar: [
       [{ header: [1, 2, false] }],
@@ -15,6 +16,7 @@ export default function Editor({value,onChange}) {
       ['clean'],
     ],
   };
+  
   return (
     <div className="content">
     <ReactQuill

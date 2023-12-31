@@ -3,19 +3,23 @@ import {useState} from "react";
 export default function RegisterPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+
   async function register(ev) {
     ev.preventDefault();
+
     const response = await fetch('http://localhost:4000/register', {
       method: 'POST',
       body: JSON.stringify({username,password}),
       headers: {'Content-Type':'application/json'},
     });
+    //if registration was not successful, server responds with 400 status code,else default 200 for success 
     if (response.status === 200) {
       alert('registration successful');
     } else {
       alert('registration failed');
     }
   }
+
   return (
     <form className="register" onSubmit={register}>
       <h1>Register</h1>

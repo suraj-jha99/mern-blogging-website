@@ -5,7 +5,7 @@ const PostSchema = new Schema({
   title:String,
   summary:String,
   content:String,
-  cover:String,
+  cover:String,//cover holds the file name 
   author:{type:Schema.Types.ObjectId, ref:'User'},
 }, {
   timestamps: true,
